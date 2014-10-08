@@ -24,7 +24,7 @@ var hotelSchema = new Schema ({
 
 var thingstodoSchema = new Schema ({
 	name: String,
-	place: String,
+	place: [placeSchema],
 	age_range: String
 
 });
