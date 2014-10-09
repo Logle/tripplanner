@@ -31,7 +31,7 @@ var thingstodoSchema = new Schema ({
 
 var restaurantSchema = new Schema ({
 	name: String,
-	place: String,
+	place: [placeSchema],
 	cuisine: String,
 	price: Number
 });

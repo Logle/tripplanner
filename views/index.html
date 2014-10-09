@@ -5,26 +5,23 @@
 	<div class="row">
 		<div class="col-md-3">
 			<br>
+			<br>
 			<div class="btn-group btn-group-sm">
-  				<button type="button" class="btn btn-default">Day 1</button>
+  				<button type="button" class="btn btn-default" class="day1">Day 1</button>
   				<button type="button" class="btn btn-default">Day 2</button>
   				<button type="button" class="btn btn-default">Day 3</button>
   				<button type="button" class="btn btn-default">+ Add Day</button>
 			</div>
 		</div>
 		<div class="col-md-3">
-			<h4>Hotels</h4>
+			<h4>Hotels </h4>
 			<div class='btn-group'>
 				<div class="btn-group">
-	  				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-	    				Dropdown 
+	  				<button type="button" id="nowhotel" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 	    				<span class="caret"></span>
 	  				</button>
-	  				<ul class="dropdown-menu" role="menu">
-					    <li><a> Action </a></li>
-					    <li><a> Another action </a></li>
-					    <li><a> Something else here </a></li>
-	  				</ul>
+	  				<ul class="dropdown-menu" id= "list_hotels" role="menu">
+					</ul>
 	  			</div>
   				<button type="button" class="btn btn-default">Add</button>
   			</div>
@@ -33,14 +30,10 @@
 			<h4>Things to do</h4>
 			<div class='btn-group'>
 				<div class="btn-group">
-	  				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-	    				Dropdown 
+	  				<button type="button" id="nowthingtodo" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 	    				<span class="caret"></span>
 	  				</button>
-	  				<ul class="dropdown-menu" role="menu">
-					    <li><a> Action </a></li>
-					    <li><a> Another action </a></li>
-					    <li><a> Something else here </a></li>
+	  				<ul class="dropdown-menu" id="list_thingstodo" role="menu">
 	  				</ul>
 	  			</div>
   				<button type="button" class="btn btn-default">Add</button>
@@ -50,14 +43,10 @@
 			<h4>Restaurants</h4>
 			<div class='btn-group'>
 				<div class="btn-group">
-	  				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-	    				Dropdown 
+	  				<button type="button" id="nowrestaurant" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 	    				<span class="caret"></span>
 	  				</button>
-	  				<ul class="dropdown-menu" role="menu">
-					    <li><a> Action </a></li>
-					    <li><a> Another action </a></li>
-					    <li><a> Something else here </a></li>
+	  				<ul class="dropdown-menu" id="list_restaurants" role="menu">
 	  				</ul>
 	  			</div>
   				<button type="button" class="btn btn-default">Add</button>
@@ -65,20 +54,22 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-3">
-			<h4>Plan for Day 1</h4>
+		<div class="col-md-3" id="dayPlan">
+			
 		</div>
 		<div class="col-md-9">
 			<br>
-			<div style="height: 550px; width:800px" id="map-canvas" ></div>
+			<div style="height: 500px; width:750px" id="map-canvas" ></div>
 		</div>
 	</div>
-{% endblock %}
-
 <script>
  {% autoescape false %}
 	var all_hotels = {{ hotels | json }};
 	var all_restaurants = {{ restaurants | json }};
 	var all_things_to_do = {{ things_to_do | json }};
  {% endautoescape %}
-</script>
+ </script>
+
+<script src="javascripts/menu_function.js"> </script> 
+ 
+{% endblock %} 
