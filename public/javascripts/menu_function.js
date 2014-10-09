@@ -84,10 +84,10 @@ $(document).ready(function() {
     var days =[];  addDay(days); drawDay(days[0]);
 	
 	$("a").click(function(){
-		element = $(this);
+		var element = $(this); 
 		if (element.parent().parent().attr('id') === "list_hotels"){
 			nowhotel = $(this).context.innerHTML;
-			$("#nowhotel").html(nowhotel + "<span class='caret'></span>");
+			$("#nowhotel").html("<span>" + nowhotel+ "</span>" );
 			var ob = lookUpName(all_hotels, nowhotel);
 			if (ob != null){
 				initialize_gmaps(ob.place[0].location[0],ob.place[0].location[1]);
@@ -95,7 +95,7 @@ $(document).ready(function() {
 		}
 		if (element.parent().parent().attr('id') === "list_thingstodo"){
 			nowthingtodo = $(this).context.innerHTML;
-			$("#nowthingtodo").html(nowthingtodo + "<span class='caret'></span>");
+			$("#nowthingtodo").html("<span>"+nowthingtodo+"</span>");
 			var ob = lookUpName(all_things_to_do, nowthingtodo);
 			if (ob != null){
 				initialize_gmaps(ob.place[0].location[0],ob.place[0].location[1]);
@@ -104,11 +104,17 @@ $(document).ready(function() {
 		}
 		if (element.parent().parent().attr('id') === "list_restaurants"){
 			nowrestaurant = $(this).context.innerHTML;
-			$("#nowrestaurant").html(nowrestaurant + "<span class='caret'></span>");
+			$("#nowrestaurant").html("<span>"+nowrestaurant+"</span>");
 			var ob = lookUpName(all_restaurants, nowrestaurant);
 			if (ob != null){
 				initialize_gmaps(ob.place[0].location[0],ob.place[0].location[1]);
 			}
+		}
+	})
+	$(".addSomething").click(function(){
+		addelement = $(this); 
+		if (addelement.parent().siblings().attr('id')==="planHotel" ){
+
 		}
 	})
 });
