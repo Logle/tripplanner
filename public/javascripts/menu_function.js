@@ -23,6 +23,7 @@ function initialize_gmaps(x,y) {
 function drawDay(dayObject){
 
 	$('#dayPlan').html("<h4>Hotel:</h4>");
+
 	if (dayObject.hotel != null){
 		$("#dayPlan").append("<p>" + dayObject.hotel + "</p>")
 	}  
@@ -80,8 +81,8 @@ $(document).ready(function() {
     var nowhotel = all_hotels[0].name;
     var nowthingtodo = all_things_to_do[0].name;
     var nowrestaurant = all_restaurants[0].name;
-    
-    var days =[];  addDay(days); drawDay(days[0]);
+    var thisday = 1;
+	var days =[];  addDay(days); addDay(days); addDay(days); drawDay(days[0]);
 	
 	$("a").click(function(){
 		var element = $(this); 
@@ -110,11 +111,30 @@ $(document).ready(function() {
 				initialize_gmaps(ob.place[0].location[0],ob.place[0].location[1]);
 			}
 		}
-	})
+	});
 	$(".addSomething").click(function(){
-		addelement = $(this); 
+		var	addelement = $(this); 
 		if (addelement.parent().siblings().attr('id')==="planHotel" ){
-
+			days[thisday-1].hotel = addelement.siblings().children()[0].innerText;
+			drawDay(days[thisday-1]);
 		}
-	})
+		if (addelement.parent().siblings().attr('id')==="planThing" ){
+			var count = days[thisday-1].thingsToDo.length;
+			days[thisday-1].thingsToDo[count] = addelement.siblings().children()[0].innerText;
+			drawDay(days[thisday-1]);
+		}
+		if (addelement.parent().siblings().attr('id')==="planRestaurant" ){
+			var count = days[thisday-1].restaurant.length;
+			days[thisday-1].restaurant[count] = addelement.siblings().children()[0].innerText;
+			drawDay(days[thisday-1]);
+		}
+	});
+	$(".day").click(function(){
+	 	var dayelement = $(this);
+	 	thisday = parseInt(dayelement.text()[dayelement.text().length-1]);
+	 	$('.active').removeClass('active');
+	 	$(this).addClass('active');
+	 	// console.log(thisday);
+	 	drawDay(days[thisday-1]);
+	});
 });
