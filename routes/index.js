@@ -10,7 +10,10 @@ router.get('/', function(req, res) {
           var restaurants = restaurants;
           models.ThingsToDo.find(function(err, things_to_do) {
               var things_to_do = things_to_do;
-              res.render('index', {hotels: hotels, restaurants: restaurants, things_to_do: things_to_do})
+              models.Day.find(function(err, days){
+                var days = days;
+                res.render('index', {hotels: hotels, restaurants: restaurants, things_to_do: things_to_do, days:days});
+              })
           })
       })
   })

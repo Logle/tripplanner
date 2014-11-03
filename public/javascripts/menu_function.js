@@ -20,16 +20,35 @@ function initialize_gmaps(x,y) {
         marker.setMap(map);
 };
 
+// to write new visit to server
+
+function writeVisitToServer(dayId, type_of_place, name) {
+  var post_data = {
+    type_of_place: type_of_place,
+    name: name
+  };
+ 
+  // the callback function below will be called if this request completes successfully. 
+  // the server's response to this request is passed into this callback function as "responseData"
+ 
+  var post_callback = function (responseData) {
+    //... what to do when done...
+  };
+ 
+  // jQuery Ajax call - super very efficient
+  $.post( "/days/" + dayId + "/attractions", post_data, post_callback);
+}
+
+// this function draw the day plan given the dayObject parameter
 function drawDay(dayObject){
 
 	$('#dayPlan').html("<h4>Hotel:</h4>");
-
-	if (dayObject.hotel != null){
+ 	if (dayObject.hotel != ''){
 		$("#dayPlan").append("<p>" + dayObject.hotel + "</p>")
 	}  
 	$('#dayPlan').append("<h4>Things To Do: </h4>"); 		
 	for (i=0; i<dayObject.thingsToDo.length; i++){
-		$("#dayPlan").append("<p>" + dayObject.thingsToDo[i] + "</p>")	
+		$("#dayPlan").append("<p>" + dayObject.thingsToDo[i]+ "</p>")	
 	};
 	$('#dayPlan').append("<h4>Restaurants: </h4>"); 
 	for (i=0; i<dayObject.restaurant.length; i++){
@@ -37,7 +56,7 @@ function drawDay(dayObject){
 	} ;
 	
 }
-
+// this function initiate map and initiate the lists of hotels, restaurants and things to do
 function prepareList(){
 	
 	initialize_gmaps(40.705786, -74.007672);
@@ -52,14 +71,16 @@ function prepareList(){
 		$("#list_restaurants").append("<li><a>" + restaurant.name +"</a></li>"); 
 	})
 
-	$("#nowhotel").prepend(all_hotels[0].name);
-	$("#nowthingtodo").prepend(all_things_to_do[0].name);
-	$("#nowrestaurant").prepend(all_restaurants[0].name);
+	$("#hotelInMenu").prepend(all_hotels[0].name);
+	$("#thingtodoInMenu").prepend(all_things_to_do[0].name);
+	$("#restaurantInMenu").prepend(all_restaurants[0].name);
 };
+
+// check if the array containt an element that has name property equal to name and return that element
 
 function lookUpName(Arr, name){
 	for (var i=0, n=Arr.length; i<n; i++){
-		if (Arr[i].name===name) {
+		if (Arr[i].name === name) {
 			return Arr[i];
 		}
 	}
@@ -67,74 +88,95 @@ function lookUpName(Arr, name){
 }
 
 function addDay(days){
-	return days.push({
-		hotel: null,
-		thingsToDo: [],
-		restaurant: []
-	});
+
+}
+
+function initiateDatabase(){
+	$.post("/days");
+}
+
+function sort(arr){
+	var sorted = [];
+	for (var i=0; i<arr.length; i++){
+		sorted[arr[i].day_number - 1] = arr[i];
+	}
+	return sorted;
 }
 
 $(document).ready(function() {
    	
    	prepareList();
-
-    var nowhotel = all_hotels[0].name;
-    var nowthingtodo = all_things_to_do[0].name;
-    var nowrestaurant = all_restaurants[0].name;
+   	// initiateDatabase(); 
+   	// the database cannot be null !!!
+    var hotelInMenu = all_hotels[0].name;
+    var thingtodoInMenu = all_things_to_do[0].name;
+    var restaurantInMenu = all_restaurants[0].name;
+    var days = all_days;
     var thisday = 1;
-	var days =[];  addDay(days); addDay(days); addDay(days); drawDay(days[0]);
+    drawDay(days[0]);  
+	
+	// console.log("this is days", days);
+	// if a element item is clicked, move it to the front and initiate the map
 	
 	$("a").click(function(){
 		var element = $(this); 
 		if (element.parent().parent().attr('id') === "list_hotels"){
-			nowhotel = $(this).context.innerHTML;
-			$("#nowhotel").html("<span>" + nowhotel+ "</span>" );
-			var ob = lookUpName(all_hotels, nowhotel);
-			if (ob != null){
-				initialize_gmaps(ob.place[0].location[0],ob.place[0].location[1]);
+			hotelInMenu = element.text();
+			$("#hotelInMenu").html("<span>" + hotelInMenu+ "</span> <span class='caret'></span>" );
+			var chosenObject = lookUpName(all_hotels, hotelInMenu);
+			if (chosenObject != null){
+				initialize_gmaps(chosenObject.place[0].location[0],chosenObject.place[0].location[1]);
 			}
-		}
-		if (element.parent().parent().attr('id') === "list_thingstodo"){
-			nowthingtodo = $(this).context.innerHTML;
-			$("#nowthingtodo").html("<span>"+nowthingtodo+"</span>");
-			var ob = lookUpName(all_things_to_do, nowthingtodo);
-			if (ob != null){
-				initialize_gmaps(ob.place[0].location[0],ob.place[0].location[1]);
+		} else if (element.parent().parent().attr('id') === "list_thingstodo"){
+			thingtodoInMenu = element.text();
+			$("#thingtodoInMenu").html("<span>"+thingtodoInMenu+"</span> <span class='caret'></span>");
+			var chosenObject = lookUpName(all_things_to_do, thingtodoInMenu);
+			if (chosenObject != null){
+				initialize_gmaps(chosenObject.place[0].location[0],chosenObject.place[0].location[1]);
 			}
 
-		}
-		if (element.parent().parent().attr('id') === "list_restaurants"){
-			nowrestaurant = $(this).context.innerHTML;
-			$("#nowrestaurant").html("<span>"+nowrestaurant+"</span>");
-			var ob = lookUpName(all_restaurants, nowrestaurant);
-			if (ob != null){
-				initialize_gmaps(ob.place[0].location[0],ob.place[0].location[1]);
+		} else if (element.parent().parent().attr('id') === "list_restaurants"){
+			restaurantInMenu = element.text();
+			$("#restaurantInMenu").html("<span>"+restaurantInMenu+"</span> <span class='caret'></span>");
+			var chosenObject = lookUpName(all_restaurants, restaurantInMenu);
+			if (chosenObject != null){
+				initialize_gmaps(chosenObject.place[0].location[0],chosenObject.place[0].location[1]);
 			}
 		}
 	});
+	
+	// add a element item into the day plan list
 	$(".addSomething").click(function(){
 		var	addelement = $(this); 
 		if (addelement.parent().siblings().attr('id')==="planHotel" ){
-			days[thisday-1].hotel = addelement.siblings().children()[0].innerText;
+			days[thisday-1].hotel = hotelInMenu;
+			writeVisitToServer(thisday,'hotel', hotelInMenu);
 			drawDay(days[thisday-1]);
-		}
-		if (addelement.parent().siblings().attr('id')==="planThing" ){
+		} else if (addelement.parent().siblings().attr('id')==="planThing" ){
 			var count = days[thisday-1].thingsToDo.length;
-			days[thisday-1].thingsToDo[count] = addelement.siblings().children()[0].innerText;
-			drawDay(days[thisday-1]);
-		}
-		if (addelement.parent().siblings().attr('id')==="planRestaurant" ){
+			if( days[thisday-1].thingsToDo.indexOf(thingtodoInMenu) === -1  ) { 
+				days[thisday-1].thingsToDo[count] = thingtodoInMenu;
+				writeVisitToServer(thisday,'thingtodo', thingtodoInMenu); 
+				drawDay(days[thisday-1]);
+			}
+		} else if (addelement.parent().siblings().attr('id')==="planRestaurant" ){
 			var count = days[thisday-1].restaurant.length;
-			days[thisday-1].restaurant[count] = addelement.siblings().children()[0].innerText;
-			drawDay(days[thisday-1]);
+			if( days[thisday-1].restaurant.indexOf(restaurantInMenu) === -1  ) { 
+				days[thisday-1].restaurant[count] = restaurantInMenu;
+				writeVisitToServer(thisday,'restaurant', restaurantInMenu); 
+				drawDay(days[thisday-1]);
+			}
+			
 		}
 	});
+	
+	// this to change the view of that day itinerary 
 	$(".day").click(function(){
 	 	var dayelement = $(this);
 	 	thisday = parseInt(dayelement.text()[dayelement.text().length-1]);
-	 	$('.active').removeClass('active');
-	 	$(this).addClass('active');
 	 	// console.log(thisday);
-	 	drawDay(days[thisday-1]);
+	 	$('.active.day').removeClass('active');
+	 	$(this).addClass('active');
+		drawDay(days[thisday-1]);
 	});
 });
